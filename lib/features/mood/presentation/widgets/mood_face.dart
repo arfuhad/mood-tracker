@@ -17,11 +17,11 @@ class MoodFace extends StatelessWidget {
   Color get _backgroundColor {
     switch (mood) {
       case Mood.happy:
-        return const Color(0xFFFFF9C4); // Light yellow
+        return const Color(0xFFE4DD9A); // Light yellow
       case Mood.neutral:
-        return const Color(0xFFF0F4F8); // Light greyish blue
+        return const Color(0xFFD3D3D3); // Light greyish blue
       case Mood.sad:
-        return const Color(0xFFE8EAF6); // Light blue
+        return const Color(0xFF86A2C5); // Light blue
     }
   }
 
