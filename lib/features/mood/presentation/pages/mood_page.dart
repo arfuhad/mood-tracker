@@ -4,9 +4,11 @@ import '../../../../injection_container.dart';
 import '../../domain/entities/mood_entry.dart';
 import '../bloc/mood_bloc.dart';
 import '../bloc/mood_event.dart';
-import '../bloc/mood_state.dart';
-import '../widgets/mood_face.dart';
-import '../widgets/timeline_entry_widget.dart';
+import '../widgets/mood_button.dart';
+import '../widgets/weekly_streak_card.dart';
+import '../widgets/average_mood_card.dart';
+import '../widgets/mood_timeline.dart';
+import 'package:intl/intl.dart';
 
 class MoodPage extends StatelessWidget {
   const MoodPage({super.key});
@@ -26,115 +28,206 @@ class MoodView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Mood Tracker', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+      backgroundColor: const Color(0xFFFAFAFA),
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            const Text(
-              'How are you feeling?',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _MoodButton(mood: Mood.sad, label: 'Sad'),
-                _MoodButton(mood: Mood.neutral, label: 'Neutral'),
-                _MoodButton(mood: Mood.happy, label: 'Happy'),
-              ],
-            ),
-            const Spacer(),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Divider(),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Past Entries',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            const SizedBox(
-              height: 160,
-              child: _MoodTimeline(),
-            ),
-            const SizedBox(height: 40),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 32),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 800) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            flex: 3,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: MoodButton(
+                                    mood: Mood.happy,
+                                    label: 'Happy',
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: MoodButton(
+                                    mood: Mood.neutral,
+                                    label: 'Neutral',
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: MoodButton(
+                                    mood: Mood.sad,
+                                    label: 'Sad',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              children: [
+                                const WeeklyStreakCard(),
+                                const SizedBox(height: 16),
+                                const AverageMoodCard(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: MoodButton(
+                                  mood: Mood.happy,
+                                  label: 'Happy',
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: MoodButton(
+                                  mood: Mood.neutral,
+                                  label: 'Neutral',
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: MoodButton(mood: Mood.sad, label: 'Sad'),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 24),
+                          WeeklyStreakCard(),
+                          SizedBox(height: 16),
+                          AverageMoodCard(),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 24),
+              _buildPastEntries(),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
   }
-}
 
-class _MoodButton extends StatelessWidget {
-  final Mood mood;
-  final String label;
-
-  const _MoodButton({required this.mood, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            context.read<MoodBloc>().add(AddMoodEvent(mood));
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Logged $label mood!'),
-                duration: const Duration(seconds: 1),
-                behavior: SnackBarBehavior.floating,
-                width: 200,
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Hello there !! This is mood tracker application.',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
               ),
-            );
-          },
-          child: MoodFace(mood: mood, size: 80),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-      ],
+              SizedBox(height: 4),
+              Text(
+                'How are you feeling?',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -1.5,
+                ),
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                "${DateFormat('EEEE').format(DateTime.now())}, ${DateTime.now().hour < 12
+                    ? 'Morning'
+                    : DateTime.now().hour < 18
+                    ? 'Afternoon'
+                    : 'Evening'}",
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
-}
 
-class _MoodTimeline extends StatelessWidget {
-  const _MoodTimeline();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MoodBloc, MoodState>(
-      builder: (context, state) {
-        if (state is MoodLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is MoodLoaded) {
-          if (state.entries.isEmpty) {
-            return const Center(child: Text('No entries yet. Log your first mood!'));
-          }
-
-          // Only show last 7 entries
-          final entriesToShow = state.entries.take(7).toList();
-
-          return ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            scrollDirection: Axis.horizontal,
-            itemCount: entriesToShow.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 30),
-            itemBuilder: (context, index) {
-              return TimelineEntryWidget(entry: entriesToShow[index]);
-            },
-          );
-        } else if (state is MoodError) {
-          return Center(child: Text(state.message));
-        }
-        return const SizedBox();
-      },
+  Widget _buildPastEntries() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Past 7 Entries',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Scroll for more',
+                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Divider(color: Colors.grey[200]),
+          const SizedBox(height: 24),
+          const SizedBox(height: 120, child: MoodTimeline()),
+        ],
+      ),
     );
   }
 }

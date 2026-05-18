@@ -14,14 +14,14 @@ class MoodFace extends StatelessWidget {
     this.isSelected = false,
   });
 
-  Color get _moodColor {
+  Color get _backgroundColor {
     switch (mood) {
       case Mood.happy:
-        return Colors.green;
+        return const Color(0xFFFFF9C4); // Light yellow
       case Mood.neutral:
-        return Colors.grey;
+        return const Color(0xFFF0F4F8); // Light greyish blue
       case Mood.sad:
-        return Colors.blue;
+        return const Color(0xFFE8EAF6); // Light blue
     }
   }
 
@@ -30,20 +30,22 @@ class MoodFace extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: isSelected
-          ? BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
+      decoration: BoxDecoration(
+        color: _backgroundColor,
+        borderRadius: BorderRadius.circular(size * 0.25),
+        boxShadow: isSelected
+            ? [
                 BoxShadow(
-                  color: _moodColor.withValues(alpha: 0.4),
+                  color: _backgroundColor.withValues(alpha: 0.6),
                   blurRadius: 15,
                   spreadRadius: 5,
                 ),
-              ],
-            )
-          : null,
+              ]
+            : null,
+      ),
+      padding: EdgeInsets.all(size * 0.15),
       child: CustomPaint(
-        painter: MoodFacePainter(mood: mood, color: _moodColor),
+        painter: MoodFacePainter(mood: mood, color: Colors.black),
       ),
     );
   }

@@ -47,21 +47,25 @@ class _TimelineEntryWidgetState extends State<TimelineEntryWidget>
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            DateFormat('MMM d, h:mm a').format(widget.entry.date),
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            DateFormat('MMM d').format(widget.entry.date).toUpperCase(),
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           ScaleTransition(
             scale: _scaleAnimation,
-            child: MoodFace(mood: widget.entry.mood, size: 60),
+            child: MoodFace(mood: widget.entry.mood, size: 55),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
           Container(
-            width: 40,
+            width: 4,
             height: 4,
             decoration: BoxDecoration(
               color: _getMoodColor(widget.entry.mood),
-              borderRadius: BorderRadius.circular(2),
+              shape: BoxShape.circle,
             ),
           ),
         ],
@@ -72,11 +76,11 @@ class _TimelineEntryWidgetState extends State<TimelineEntryWidget>
   Color _getMoodColor(Mood mood) {
     switch (mood) {
       case Mood.happy:
-        return Colors.green;
+        return const Color(0xFFFFD54F); // Amber[300]
       case Mood.neutral:
-        return Colors.grey;
+        return const Color(0xFF90A4AE); // BlueGrey[300]
       case Mood.sad:
-        return Colors.blue;
+        return const Color(0xFF7986CB); // Indigo[300]
     }
   }
 }
