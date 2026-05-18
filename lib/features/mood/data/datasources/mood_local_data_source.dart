@@ -19,5 +19,8 @@ class MoodLocalDataSourceImpl implements MoodLocalDataSource {
   @override
   Future<void> addMoodEntry(Mood mood) async {
     _entries.add(MoodEntry(date: DateTime.now(), mood: mood));
+    if (_entries.length > 7) {
+      _entries.removeAt(0);
+    }
   }
 }

@@ -5,7 +5,7 @@ import '../../domain/entities/mood_entry.dart';
 import '../bloc/mood_bloc.dart';
 import '../bloc/mood_event.dart';
 import '../widgets/mood_button.dart';
-import '../widgets/weekly_streak_card.dart';
+import '../widgets/days_streak_card.dart';
 import '../widgets/average_mood_card.dart';
 import '../widgets/mood_timeline.dart';
 import 'package:intl/intl.dart';
@@ -34,63 +34,73 @@ class MoodView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
-              const SizedBox(height: 32),
+              // _buildHeader(),
+              // const SizedBox(height: 32),
               LayoutBuilder(
                 builder: (context, constraints) {
                   if (constraints.maxWidth > 800) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Expanded(
-                            flex: 3,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: MoodButton(
-                                    mood: Mood.happy,
-                                    label: 'Happy',
-                                  ),
+                    return Column(
+                      children: [
+                        _buildHeader(isSmallScreen: false),
+                        const SizedBox(height: 32),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Expanded(
+                                flex: 3,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: MoodButton(
+                                        mood: Mood.happy,
+                                        label: 'Happy',
+                                      ),
+                                    ),
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: MoodButton(
+                                        mood: Mood.neutral,
+                                        label: 'Neutral',
+                                      ),
+                                    ),
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: MoodButton(
+                                        mood: Mood.sad,
+                                        label: 'Sad',
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: MoodButton(
-                                    mood: Mood.neutral,
-                                    label: 'Neutral',
-                                  ),
+                              ),
+                              const SizedBox(width: 24),
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  children: [
+                                    const DaysStreakCard(),
+                                    const SizedBox(height: 16),
+                                    const AverageMoodCard(),
+                                  ],
                                 ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: MoodButton(
-                                    mood: Mood.sad,
-                                    label: 'Sad',
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 24),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                const WeeklyStreakCard(),
-                                const SizedBox(height: 16),
-                                const AverageMoodCard(),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   } else {
-                    return const Padding(
+                    return Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24.0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          _buildHeader(isSmallScreen: true),
+                          const SizedBox(height: 32),
                           Row(
                             children: [
                               Expanded(
@@ -113,7 +123,7 @@ class MoodView extends StatelessWidget {
                             ],
                           ),
                           SizedBox(height: 24),
-                          WeeklyStreakCard(),
+                          DaysStreakCard(),
                           SizedBox(height: 16),
                           AverageMoodCard(),
                         ],
@@ -132,63 +142,121 @@ class MoodView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Hello there !! This is mood tracker application.',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
+  Widget _buildHeader({bool isSmallScreen = false}) {
+    return isSmallScreen
+        ? Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hello there !! This is mood tracker application.',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'How are you feeling?',
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.5,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'How are you feeling?',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -1.5,
+                const SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Text(
+                      "${DateFormat('EEEE').format(DateTime.now())}, ${DateTime.now().hour < 12
+                          ? 'Morning'
+                          : DateTime.now().hour < 18
+                          ? 'Afternoon'
+                          : 'Evening'}",
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                DateFormat('MMMM d, yyyy').format(DateTime.now()),
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
+              ],
+            ),
+          )
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hello there !! This is mood tracker application.',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'How are you feeling?',
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.5,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                "${DateFormat('EEEE').format(DateTime.now())}, ${DateTime.now().hour < 12
-                    ? 'Morning'
-                    : DateTime.now().hour < 18
-                    ? 'Afternoon'
-                    : 'Evening'}",
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Text(
+                      "${DateFormat('EEEE').format(DateTime.now())}, ${DateTime.now().hour < 12
+                          ? 'Morning'
+                          : DateTime.now().hour < 18
+                          ? 'Afternoon'
+                          : 'Evening'}",
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+          );
   }
 
   Widget _buildPastEntries() {
