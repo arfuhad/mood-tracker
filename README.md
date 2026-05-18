@@ -1,17 +1,38 @@
-# mood_tracker
+# Mood Tracker
 
-A new Flutter project.
+A beautifully designed Flutter application to track, visualize, and reflect on your daily moods.
+
+## Features
+
+- **Dynamic Mood Visualizations:** Utilizes custom painters (`MoodFacePainter`) to render expressive and dynamic face representations of different moods (e.g., happy, neutral, sad).
+- **Interactive UI:** Smooth animations, pagination, and intuitive design for an engaging user experience.
+- **Firebase Integration:** Uses Firebase for backend services and data synchronization.
+
+## Screenshots
+
+<p align="center">
+  <img src="images/image-small-screen.png" alt="Small Screen" width="300" />
+  <img src="images/image-large-screen.png" alt="Large Screen" width="600" />
+</p>
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To run this project locally, ensure you have Flutter installed.
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+# Clone the repository
+git clone git@github-personal:arfuhad/mood-tracker.git
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+# Navigate into the project directory
+cd mood_tracker
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Install dependencies
+flutter pub get
+
+# Run the app
+flutter run
+```
+
+## Contributing
+
+Feel free to open issues or submit pull requests if you want to help improve Mood Tracker!
